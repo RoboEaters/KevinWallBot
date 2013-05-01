@@ -1,23 +1,20 @@
 package com.example.newrobot;
 
-import java.text.DecimalFormat;
-
 import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.IOIOLooperProvider;
 import ioio.lib.util.android.IOIOAndroidApplicationHelper;
+
+import java.text.DecimalFormat;
+
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
@@ -43,8 +40,10 @@ public class RoboEaterMain extends Activity implements IOIOLooperProvider {
 	LinearLayout UI;
 	LinearLayout UIValues;
 
-	// Threadings
+	// Threadings and TCP info
 	IOIOThread ioio_thread;
+	RosBridgeTCP ros_thread;
+	String ip_address = "ENTER IP ADDRESS HERE";
 
 	DecimalFormat df = new DecimalFormat("#.####"); // format to print voltages
 
@@ -77,6 +76,7 @@ public class RoboEaterMain extends Activity implements IOIOLooperProvider {
 	}
 
 	/** Called when the activity is first created. */
+	@TargetApi(5)
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -98,6 +98,9 @@ public class RoboEaterMain extends Activity implements IOIOLooperProvider {
 		}
 		// ensureDiscoverable(); // makes the device discoverable
 		menuSelection = 0; // set the inital selection
+		
+		
+		ros_thread = new RosBridgeTCP(this, ip_address, 9090);
 	}
 
 	// 0:MountX
